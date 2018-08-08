@@ -11,6 +11,10 @@ class User extends Model
         'account','password','pay','nickname','avatar','cid'
     ];
 
+    public function userAccount(){
+        return $this->hasOne(UserAccount::class,'user_id','id');
+    }
+
     public function setPasswordAttribute($value){
         $this->attributes['password'] = sha1($value);
     }
@@ -34,6 +38,11 @@ class User extends Model
                 Code::changeStatus($codeRight);
                 // 添加新用户
                 User::create($data);
+
+                $user_id = User::where('account',$data['account'])->value('id');
+                // 分配以太坊账户
+                AccountEth::userAddaccount($user_id);
+
                 return 200;
             }
             // 返回400 表示短信验证码有问题
@@ -41,7 +50,11 @@ class User extends Model
         }
     }
 
-
+    /**
+     * method:
+     * author: hongwenyang
+     * param:
+     */
     public static function changePassword($data){
         $codeRight = Code::where(['code'=>$data['code'],'account'=>$data['account'],'is_use'=>0])->value('id');
         $userHave = User::where('account',$data['account'])->value('id');
@@ -55,6 +68,32 @@ class User extends Model
             return 400;
         }
         // 账号不存在
+        return 403;
+    }
+
+    /**
+     * method: 修改昵称，登录密码，支付密码
+     * author: hongwenyang
+     * param:  id:用户id  type:修改类型 change:修改的内容
+     */
+    public static function changeInfo($data){
+        if($data['type'] == 1){
+            // 修改昵称
+            $fillable = ['nickname'=>$data['change']];
+        }else if($data['type'] == 2){
+            // 修改登录密码
+            $fillable = ['password'=>sha1($data['change'])];
+        }else if($data['type'] == 3){
+            // 修改支付密码
+            $fillable = ['pay'=>sha1($data['change'])];
+        }else{
+            // 异常请求
+            return 403;
+        }
+        $status = User::where('id',$data['id'])->update($fillable);
+        if($status){
+            return 200;
+        }
         return 403;
     }
 }

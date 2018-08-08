@@ -17,9 +17,11 @@ class ApiCheck
     public function handle($request, Closure $next)
     {
         if($request->method() == "GET"){
+
             return response()->json(['code'=>403,'msg'=>'请求出错']);
         }
-        
+
+
         return $next($request);
     }
 }
