@@ -14,10 +14,11 @@ class CodeController extends Controller
      * author: hongwenyang
      * param:
      */
-    public function message(Request $request){
+    public function message(Request $request)
+    {
         $account = $request->input('account');
         $code    = rand(100000,999999);
-        $status = AliSmsController::sms($account,"澜悦帝景湾","SMS_140070106",$code);
+        $status = AliSmsController::sms($account,MESSAGE_SIGN,MESSAGE_TEMCODE,$code);
         if($status == 200){
             Code::addCode($account,$code);
             $return = returnMsg(200,"短信发送成功");

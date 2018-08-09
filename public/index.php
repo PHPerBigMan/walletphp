@@ -39,6 +39,9 @@ require __DIR__.'/../app/Http/Controllers/Common/function.php';
 $app = require_once __DIR__.'/../bootstrap/app.php';
 // 修改短信验证码状态是否打开
 define("CODECHAGEOPEN",0);
+// 短信签名
+define("MESSAGE_SIGN","澜悦帝景湾");
+define("MESSAGE_TEMCODE","SMS_140070106");
 /*
 |--------------------------------------------------------------------------
 | Run The Application

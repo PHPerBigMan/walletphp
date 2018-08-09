@@ -10,4 +10,8 @@ class UserAccount extends Model
     protected $fillable = [
         'user_id','account_id'
     ];
+
+    public function account(){
+        return $this->hasOne(AccountEth::class,'id','account_id');
+    }
 }

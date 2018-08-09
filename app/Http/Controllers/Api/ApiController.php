@@ -7,6 +7,7 @@ use App\Model\Code;
 use App\Model\Feedback;
 use App\Model\Get;
 use App\Model\Notice;
+use App\Model\Send;
 use App\Model\User;
 use App\Model\UserAccount;
 use Illuminate\Http\Request;
@@ -145,5 +146,39 @@ class ApiController extends Controller
         $return = [];
         $return = Get::where('user_id',$data)->select('hash','created_at','value')->get();
         return response()->json(returnDataSuccess($return));
+    }
+
+
+    /**
+     * method: 获取注册用户的信息
+     * author: hongwenyang
+     * param:  id 用户id
+     */
+    public function userInfo(Request $request){
+        $user_id = $request->input('id');
+        $data = User::where('id',$user_id)
+            ->select('account','nickname','avater','eth_balance','tla_balance')
+            ->first();
+        return response()->json(returnDataSuccess($data));
+    }
+
+
+    /**
+     * method: 提交交易 eth
+     * author: hongwenyang
+     * param:  id 用户id   to 接收地址  value 数量
+     */
+    public function send(Request $request){
+        $data = $request->except(['s']);
+        $status = Send::send($data);
+        if($status == 200){
+            $return = returnMsg(200,"提交成功");
+        }else if($status == 400){
+            $return = returnMsg(403,"提交异常请稍后再尝试");
+        }else if($status == 403){
+            $return = returnMsg(403,"余额不足 无法进行交易");
+        }
+
+        return response()->json($return);
     }
 }

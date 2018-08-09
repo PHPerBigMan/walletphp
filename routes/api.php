@@ -26,6 +26,8 @@ Route::group(['namespace'=>'Api','middleware'=>'check'],function(){
     Route::post('/read','ApiController@noticeRead');
     Route::post('/addFeedback','ApiController@addFeedback');
     Route::post('/get','ApiController@getEth');
+    Route::post('/userInfo','ApiController@userInfo');
+    Route::post('/sendEth','ApiController@send');
 
     // 发送短信
     Route::post('/send','CodeController@message');
